@@ -853,6 +853,9 @@ namespace bgfx { namespace mtl
 		void readTexture(TextureHandle _handle, void* _data, uint8_t _mip) override
 		{
 			m_cmd.kick(false, true);
+            if (m_commandBuffer) {
+                MTL_RELEASE(m_commandBuffer);
+            }
 			m_commandBuffer = m_cmd.alloc();
 
 			const TextureMtl& texture = m_textures[_handle.idx];
@@ -980,7 +983,7 @@ namespace bgfx { namespace mtl
 			}
 
 			m_cmd.kick(false, true);
-			m_commandBuffer = 0;
+            MTL_RELEASE(m_commandBuffer);
 
 			uint32_t width  = m_screenshotTarget.width();
 			uint32_t height = m_screenshotTarget.height();
@@ -1073,6 +1076,7 @@ namespace bgfx { namespace mtl
 				if (m_renderCommandEncoder)
 				{
 					m_renderCommandEncoder.endEncoding();
+                    MTL_RELEASE(m_renderCommandEncoder);
 				}
 
 				RenderPassDescriptor renderPassDescriptor = newRenderPassDescriptor();
@@ -1177,7 +1181,7 @@ namespace bgfx { namespace mtl
 			}
 
 			m_cmd.kick(true);
-			m_commandBuffer = 0;
+            MTL_RELEASE(m_commandBuffer);
 		}
 
 		void updateResolution(const Resolution& _resolution)
@@ -1332,7 +1336,7 @@ namespace bgfx { namespace mtl
 				m_renderCommandEncoder.endEncoding();
 
 				m_cmd.kick(false, true);
-				m_commandBuffer = 0;
+                MTL_RELEASE(m_commandBuffer);
 
 				MTLRegion region = { { 0, 0, 0 }, { m_resolution.width, m_resolution.height, 1 } };
 
@@ -3176,7 +3180,7 @@ namespace bgfx { namespace mtl
 		if (0 != m_renderCommandEncoder)
 		{
 			m_renderCommandEncoder.endEncoding();
-			m_renderCommandEncoder = 0;
+            MTL_RELEASE(m_renderCommandEncoder);
 		}
 
 		m_blitCommandEncoder = getBlitCommandEncoder();
@@ -3467,6 +3471,7 @@ namespace bgfx { namespace mtl
 						if (0 != m_renderCommandEncoder)
 						{
 							m_renderCommandEncoder.endEncoding();
+                            MTL_RELEASE(m_renderCommandEncoder);
 						}
 
 						RenderPassDescriptor renderPassDescriptor = newRenderPassDescriptor();
@@ -4189,7 +4194,7 @@ namespace bgfx { namespace mtl
 		}
 
 		rce.endEncoding();
-		m_renderCommandEncoder = 0;
+        MTL_RELEASE(m_renderCommandEncoder);
 		m_renderCommandEncoderFrameBufferHandle.idx = kInvalidHandle;
 
 		if (m_screenshotTarget)
