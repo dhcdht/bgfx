@@ -318,7 +318,7 @@ _mesa_glsl_parse_state::process_version_directive(YYLTYPE *locp, int version,
       this->ARB_texture_rectangle_enable = false;
    }
 
-   this->language_version = version;
+   this->language_version = 150;
    this->had_version_string = true;
 
    bool supported = false;
